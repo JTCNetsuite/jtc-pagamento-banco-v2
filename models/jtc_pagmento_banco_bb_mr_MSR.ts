@@ -300,12 +300,6 @@ const getIntergrcaoBB = () => {
 }
 
 
-const formDateForNetsuite = (date) => {
-    const arrDate = date.split("/");
-
-    return arrDate[1]+"-"+arrDate[0]+"-"+arrDate[2]
-}
-
 const formartDate = (dateInfo) => {
     const date = new Date(dateInfo);
     var day: string | number = date.getDate();
