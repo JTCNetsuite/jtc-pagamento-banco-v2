@@ -211,7 +211,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                     
                     const idCustomerPayment = custumerPaymentRecord.save({ignoreMandatoryFields: true})
                     log.audit("idCustomerPayment", idCustomerPayment)
-
+                    
                     if (idCustomerPayment) {
                         const parcelanCnabRecord = record.load({
                             type: CTS.PARCELA_CNAB.ID,
