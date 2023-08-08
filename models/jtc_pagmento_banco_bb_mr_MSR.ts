@@ -149,7 +149,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                 
                 if (tituloCobranca == 6) {
                     log.audit("responseBoletoIndivudual", responseBoletoIndivudual)
-                    const dt_pagamento_bb = String(responseBoletoIndivudual.dataRecebimentoTitulo).split(".")
+                    const dt_pagamento_bb = String(responseBoletoIndivudual.dataCreditoLiquidacao).split(".")
 
                     const valor_pagamento_bb = responseBoletoIndivudual.valorPagoSacado
                     const dt_vencimento_bb = responseBoletoIndivudual.dataVencimentoTituloCobranca
@@ -162,11 +162,13 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                         value: 620
                     })
 
+                    const valor_orginal_pagamento = responseBoletoIndivudual.valorOriginalTituloCobranca
 
-                    if (responseBoletoIndivudual.valorOriginalTituloCobranca != valor_pagamento_bb) {
+                    if (valor_orginal_pagamento != valor_pagamento_bb) {
+
                         custumerPaymentRecord.setValue({
                             fieldId: CTS.CUSTOMER_PAYMENT.DIFENCA_PAGO,
-                            value: valor_pagamento_bb
+                            value: valor_pagamento_bb - valor_orginal_pagamento
                         })
                     }
                     custumerPaymentRecord.setValue({
