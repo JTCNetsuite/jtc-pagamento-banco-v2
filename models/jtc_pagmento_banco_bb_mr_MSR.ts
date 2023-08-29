@@ -184,11 +184,22 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                             fieldId: CTS.CUSTOMER_PAYMENT.SUBLIST_INSTALL.FIELDS.DATA_VENCIMENTO,
                             line: l
                         })
+                        const invoiceIdLine = custumerPaymentRecord.getSublistValue({
+                            sublistId: CTS.CUSTOMER_PAYMENT.SUBLIST_INSTALL.ID,
+                            fieldId: 'doc',
+                            line: l
+                        })
+                        custumerPaymentRecord.setSublistValue({
+                            fieldId: CTS.CUSTOMER_PAYMENT.SUBLIST_INSTALL.FIELDS.APPLY,
+                            sublistId: CTS.CUSTOMER_PAYMENT.SUBLIST_INSTALL.ID,
+                            line: l,
+                            value: false
+                        })
 
                         const dt_venc_formated_nt = formartDate(data_vencimento_netsuite)
 
 
-                        if (dt_vencimento_bb == dt_venc_formated_nt) {
+                        if (dt_vencimento_bb == dt_venc_formated_nt && invoiceIdLine == idInvoice) {
                             // log.audit("data Vencimento Netsuite", dt_venc_formated_nt)
 
                             // log.audit("data Vencimento BB", dt_vencimento_bb)
