@@ -23,7 +23,11 @@ export const getInputData = () => {
             filters: [
                 [CTS.INVOICE.STATUS, search.Operator.IS, 2], 
                 "AND",
-                ["mainline", search.Operator.IS, "T"]
+                ["mainline", search.Operator.IS, "T"],
+                "AND", 
+                ["custbody_jtc_created_bill","is","T"], 
+                "AND", 
+                ["terms","noneof","48","49"]
                 // "AND",
                 // ["internalid", search.Operator.ANYOF, 20259]
             ],
