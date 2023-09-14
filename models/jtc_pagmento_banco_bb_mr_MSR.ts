@@ -17,7 +17,7 @@ export const getInputData = () => {
     try {
 
         const response = []
-
+        let limi = 0
         const invoiceRecord = search.create({
             type: search.Type.INVOICE,
             filters: [
@@ -35,6 +35,7 @@ export const getInputData = () => {
                 search.createColumn({name: CTS.INVOICE.INTERNALID})
             ]
         }).run().each(res => {
+            limi +=1
             // log.debug('res', res);
             const results = JSON.parse(JSON.stringify(res));
             const idInvoice = String(res.getValue({name:CTS.INVOICE.INTERNALID}));
@@ -42,7 +43,11 @@ export const getInputData = () => {
 
             const cnabInstallSearch = search.create({
                 type: CTS.PARCELA_CNAB.ID,
-                filters: [CTS.PARCELA_CNAB.TRANSACTION, search.Operator.ANYOF, idInvoice],
+                filters: [
+                    [CTS.PARCELA_CNAB.TRANSACTION, search.Operator.ANYOF, idInvoice],
+                    "AND",
+                    ["custrecord_jtc_int_boleto_pago", search.Operator.IS, "F"]
+                ],
                 columns: [
                     search.createColumn({
                         name: CTS.PARCELA_CNAB.NOSSO_NUMERO
@@ -61,6 +66,10 @@ export const getInputData = () => {
             }
             response.push(invoiceObject);
 
+            if (limi == 1000) {
+                return
+            }
+            
              return true
         })
         log.debug("response;", response)
@@ -146,6 +155,8 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                     headers: headerArr
                 }).body)
 
+
+
                 
                 const tituloCobranca = responseBoletoIndivudual.codigoEstadoTituloCobranca
 
@@ -165,6 +176,15 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                         fieldId: CTS.CUSTOMER_PAYMENT.CONTA_BANCARIA,
                         value: 620
                     })
+
+                    const subsidiary = custumerPaymentRecord.getValue('subsidiary')
+
+                    if (subsidiary == 3 || subsidiary == '3') {
+                        custumerPaymentRecord.setValue({
+                            fieldId: 'account',
+                            value: 724
+                        })
+                    } 
 
                     const valor_orginal_pagamento = responseBoletoIndivudual.valorOriginalTituloCobranca
 
