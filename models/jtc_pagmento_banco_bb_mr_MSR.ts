@@ -27,9 +27,11 @@ export const getInputData = () => {
                 "AND", 
                 ["custbody_jtc_created_bill","is","T"], 
                 "AND", 
-                ["terms","noneof","48","49"]
+                ["terms","noneof","48","49"],
+                "AND",
+                ["status","anyof","CustInvc:A"]
                 // "AND",
-                // ["internalid", search.Operator.ANYOF, 20259]
+                // ["internalid", search.Operator.ANYOF, 26818]
             ],
             columns: [
                 search.createColumn({name: CTS.INVOICE.INTERNALID})
@@ -178,6 +180,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                     })
 
                     const subsidiary = custumerPaymentRecord.getValue('subsidiary')
+                    log.audit("subsiday", subsidiary)
 
                     if (subsidiary == 3 || subsidiary == '3') {
                         custumerPaymentRecord.setValue({
