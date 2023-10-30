@@ -31,7 +31,7 @@ export const getInputData = () => {
                 "AND",
                 ["status","anyof","CustInvc:A"]
                 // "AND",
-                // ["internalid", search.Operator.ANYOF, 26818]
+                // ["internalid", search.Operator.ANYOF, 72358]
             ],
             columns: [
                 search.createColumn({name: CTS.INVOICE.INTERNALID})
@@ -74,7 +74,27 @@ export const getInputData = () => {
             
              return true
         })
-        log.debug("response;", response)
+        log.debug("response;", response.length)
+        // const invoiceRecord = search.create({
+        //     type: search.Type.INVOICE,
+        //     filters: [
+        //         [CTS.INVOICE.STATUS, search.Operator.IS, 2], 
+        //         "AND",
+        //         ["mainline", search.Operator.IS, "T"],
+        //         "AND", 
+        //         ["custbody_jtc_created_bill","is","T"], 
+        //         "AND", 
+        //         ["terms","noneof","48","49"],
+        //         "AND",
+        //         ["status","anyof","CustInvc:A"]
+        //         // "AND",
+        //         // ["internalid", search.Operator.ANYOF, 72358]
+        //     ],
+        //     columns: [
+        //         search.createColumn({name: CTS.INVOICE.INTERNALID})
+        //     ]
+        // }).runPaged().count
+        // log.debug("invoiceRecord", invoiceRecord)
 
         return response
 
@@ -89,7 +109,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
         const data = getIntergrcaoBB()
         const token = getAccessToken(data.url_token, data.authorization)
 
-        log.debug("token", token)
+        // log.debug("token", token)
 
         const result = JSON.parse(ctx.value)
         
@@ -117,7 +137,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
             filters.pop();
             // filters.push("AND", [CTS.PARCELA_CNAB.BOLETO_PAGO, search.Operator.IS, "F"])
 
-            log.debug("filters", filters)
+            // log.debug("filters", filters)
             
 
             const searchParcelaCnab = search.create({
@@ -145,7 +165,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                 
                 const urlBoletoIndividual = `https://api.bb.com.br/cobrancas/v2/boletos/${nossnum}?gw-dev-app-key=${data.key}&numeroConvenio=${numConverio}`
 
-                log.debug('urlBoletoIndividual', urlBoletoIndividual)
+                // log.debug('urlBoletoIndividual', urlBoletoIndividual)
                 const authObj = token.body.token_type + " " + token.body.access_token
 
                 const headerArr = {};
@@ -174,20 +194,25 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
 
                     const lineCount = custumerPaymentRecord.getLineCount(CTS.CUSTOMER_PAYMENT.SUBLIST_INSTALL.ID)
 
-                    custumerPaymentRecord.setValue({
-                        fieldId: CTS.CUSTOMER_PAYMENT.CONTA_BANCARIA,
-                        value: 620
-                    })
+                    
+                    
+                    custumerPaymentRecord.setValue({fieldId: 'payment', value: valor_pagamento_bb})
 
                     const subsidiary = custumerPaymentRecord.getValue('subsidiary')
-                    log.audit("subsiday", subsidiary)
+                    // log.audit("subsiday", subsidiary)
 
                     if (subsidiary == 3 || subsidiary == '3') {
                         custumerPaymentRecord.setValue({
                             fieldId: 'account',
-                            value: 724
+                            value: 620
                         })
-                    } 
+
+                    } else {
+                        custumerPaymentRecord.setValue({
+                            fieldId: CTS.CUSTOMER_PAYMENT.CONTA_BANCARIA,
+                            value: 620
+                        })
+                    }
 
                     const valor_orginal_pagamento = responseBoletoIndivudual.valorOriginalTituloCobranca
 
@@ -243,7 +268,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
                                 value: true
                             })
                             
-                            log.audit(dt_venc_formated_nt, dt_vencimento_bb)
+                            log.debug(dt_venc_formated_nt, dt_vencimento_bb)
                             
                         }
 
