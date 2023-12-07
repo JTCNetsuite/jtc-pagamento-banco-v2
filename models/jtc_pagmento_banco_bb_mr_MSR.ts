@@ -274,7 +274,7 @@ export const map = (ctx: EntryPoints.MapReduce.mapContext) => {
 
                     }
                     
-                    const idCustomerPayment = custumerPaymentRecord.save({ignoreMandatoryFields: true})
+                    const idCustomerPayment = custumerPaymentRecord.save()
                     log.audit("idCustomerPayment", idCustomerPayment)
                     
                     if (idCustomerPayment) {
